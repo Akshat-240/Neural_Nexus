@@ -1,0 +1,30 @@
+{
+  "event_id": "EVT-0001",
+  "project_id": "PRJ-DEMO-01",
+
+  "source": {
+    "type": "text",
+    "ref": "daily_report_2026-09-03_001"
+  },
+
+  "raw_text": "24-XX spool erected today at Unit 3.",
+
+  "extracted": {
+    "activity": "24-XX spool erection",
+    "discipline": "Piping",
+    "status": "completed",
+    "actual_start": null,
+    "actual_end": "2026-09-03T16:30:00",
+    "location": "Unit 3",
+    "asset_or_reference": "24-XX",
+    "context": "Spool erection"
+  },
+
+  "evidence_refs": [
+    "EVD-0001"
+  ],
+
+  "extraction_confidence": 0.94,
+
+  "created_at": "2026-09-03T16:31:00"
+}

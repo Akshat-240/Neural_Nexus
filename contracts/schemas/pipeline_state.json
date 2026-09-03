@@ -1,0 +1,21 @@
+{
+  "event_id": "EVT-0001",
+
+  "pipeline_status": "verified",
+
+  "stages": {
+    "capture": "complete",
+    "extraction": "complete",
+    "matching": "complete",
+    "evidence": "complete",
+    "confidence": "complete",
+    "review": "approved",
+    "schedule_update": "complete"
+  },
+
+  "current_activity_id": "PIP-1024",
+
+  "final_confidence": 0.94,
+
+  "updated_at": "2026-09-03T16:45:00"
+}

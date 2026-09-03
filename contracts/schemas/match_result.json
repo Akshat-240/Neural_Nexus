@@ -1,0 +1,36 @@
+{
+  "match_id": "MAT-0001",
+  "event_id": "EVT-0001",
+
+  "candidates": [
+    {
+      "activity_id": "PIP-1024",
+      "activity_name": "Erect Line 24-XX",
+
+      "scores": {
+        "semantic": 0.92,
+        "context": 0.96,
+        "visual": 0.90
+      },
+
+      "final_confidence": 0.94,
+
+      "rank": 1,
+
+      "match_reason": [
+        "Line reference matches 24-XX",
+        "Discipline matches Piping",
+        "Location matches Unit 3",
+        "Field phrase semantically matches erection activity"
+      ]
+    }
+  ],
+
+  "selected_activity_id": "PIP-1024",
+
+  "review_required": false,
+
+  "review_reason": null,
+
+  "created_at": "2026-09-03T16:35:00"
+}

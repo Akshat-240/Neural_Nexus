@@ -1,0 +1,32 @@
+{
+  "event_id": "EVT-0003",
+  "project_id": "PRJ-DEMO-01",
+
+  "source": {
+    "type": "text",
+    "ref": "daily_report_case_C"
+  },
+
+  "raw_text": "Pipe support installation is approximately 50 percent complete at Unit 3.",
+
+  "extracted": {
+    "activity": "Pipe support installation",
+    "discipline": "Mechanical",
+    "status": "in_progress",
+    "actual_start": null,
+    "actual_end": null,
+    "location": "Unit 3",
+    "asset_or_reference": null,
+    "context": "Pipe support installation"
+  },
+
+  "evidence_refs": [],
+
+  "extraction_confidence": 0.91,
+
+  "progress": {
+    "actual_progress_pct": 50.0
+  },
+
+  "created_at": "2026-09-03T17:10:00"
+}

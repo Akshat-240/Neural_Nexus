@@ -1,0 +1,24 @@
+{
+  "case_id": "CASE-C",
+  "case_name": "deviation",
+
+  "input": {
+    "source_type": "text",
+    "source_ref": "daily_report_case_C",
+    "raw_text": "Pipe support installation is approximately 50 percent complete at Unit 3."
+  },
+
+  "expected": {
+    "activity_id": "PIP-1022",
+    "activity_name": "Pipe support installation",
+
+    "actual_progress_pct": 50.0,
+    "planned_progress_pct": 80.0,
+
+    "variance_pct": -30.0,
+
+    "deviation_flag": true,
+
+    "priority": "high"
+  }
+}

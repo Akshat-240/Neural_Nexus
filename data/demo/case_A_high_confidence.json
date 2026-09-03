@@ -1,0 +1,33 @@
+{
+  "case_id": "CASE-A",
+  "case_name": "high_confidence",
+
+  "input": {
+    "source_type": "text",
+    "source_ref": "daily_report_case_A",
+    "raw_text": "24-XX spool erected today at Unit 3."
+  },
+
+  "expected": {
+    "activity_id": "PIP-1024",
+    "activity_name": "Erect Line 24-XX",
+    "discipline": "Piping",
+    "location": "Unit 3",
+    "status": "completed",
+
+    "confidence_band": "high",
+    "min_expected_confidence": 0.90,
+
+    "review_required": false,
+
+    "evidence": {
+      "required": true,
+      "expected_support": true
+    },
+
+    "schedule_update": {
+      "required": true,
+      "actual_progress_pct": 100.0
+    }
+  }
+}

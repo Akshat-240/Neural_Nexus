@@ -1,0 +1,29 @@
+{
+  "dataset_id": "NEURAL-NEXUS-DEMO-01",
+  "version": "1.0.0",
+  "project_id": "PRJ-DEMO-01",
+
+  "cases": [
+    {
+      "case_id": "CASE-A",
+      "file": "data/demo/case_A_high_confidence.json",
+      "fixture": "tests/fixtures/field_event_high_confidence.json",
+      "expected_activity_id": "PIP-1024",
+      "expected_review_required": false
+    },
+    {
+      "case_id": "CASE-B",
+      "file": "data/demo/case_B_human_review.json",
+      "fixture": "tests/fixtures/field_event_ambiguous.json",
+      "expected_review_required": true
+    },
+    {
+      "case_id": "CASE-C",
+      "file": "data/demo/case_C_deviation.json",
+      "fixture": "tests/fixtures/field_event_deviation.json",
+      "expected_activity_id": "PIP-1022",
+      "expected_variance_pct": -30.0,
+      "expected_deviation_flag": true
+    }
+  ]
+}

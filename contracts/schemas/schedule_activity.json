@@ -1,0 +1,25 @@
+{
+  "activity_id": "PIP-1024",
+  "project_id": "PRJ-DEMO-01",
+
+  "wbs": {
+    "code": "1.1.4",
+    "level": "L5"
+  },
+
+  "activity_name": "Erect Line 24-XX",
+
+  "discipline": "Piping",
+
+  "location": "Unit 3",
+
+  "planned": {
+    "start": "2026-08-25",
+    "finish": "2026-09-02",
+    "progress_pct": 100.0
+  },
+
+  "weight": 1.0,
+
+  "status": "in_progress"
+}

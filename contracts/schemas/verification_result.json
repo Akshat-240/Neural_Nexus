@@ -1,0 +1,43 @@
+{
+  "verification_id": "VER-0001",
+
+  "event_id": "EVT-0001",
+
+  "activity_id": "PIP-1024",
+
+  "confidence": {
+    "semantic": 0.92,
+    "context": 0.96,
+    "visual": 0.90,
+    "final": 0.94
+  },
+
+  "decision": {
+    "status": "approved",
+    "decision_source": "planner",
+    "review_required": false,
+    "review_reason": null
+  },
+
+  "verified_actual": {
+    "status": "completed",
+    "progress_pct": 100.0,
+    "actual_start": null,
+    "actual_end": "2026-09-03T16:30:00"
+  },
+
+  "schedule_comparison": {
+    "planned_progress_pct": 100.0,
+    "variance_pct": 0.0,
+    "schedule_variance_days": 1,
+    "deviation_flag": false
+  },
+
+  "audit": {
+    "evidence_refs": [
+      "EVD-0001"
+    ],
+    "reviewed_at": "2026-09-03T16:45:00",
+    "reviewer": "planner"
+  }
+}
