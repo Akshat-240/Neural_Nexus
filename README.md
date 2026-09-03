@@ -59,17 +59,11 @@ NEURAL-NEXUS-SIH26122/
 | Person 5 | `voice_offline/` |
 | Person 6 / Me | `integration/` + `contracts/` + final integration |
 
-### Shared Folders
 
-These are not owned by one person alone. I will coordinate these:
-- `data/`
-- `tests/`
-- `docs/`
-- `contracts/`
 
 ## Central Contract
 
-> **IMPORTANT**: Do not change shared JSON field names casually. If you need a new field, add it as optional and tell me first.
+> **IMPORTANT**: Do not change shared JSON field names casually.
 
 The contracts are available in `contracts/schemas/` and `contracts/examples/`:
 - `field_event.json`
