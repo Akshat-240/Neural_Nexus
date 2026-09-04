@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, Date
-from database import Base
+from .database import Base
 
 
 class Project(Base):
@@ -75,10 +75,20 @@ class VerificationResult(Base):
     decision = Column(String, default="review")
 
     verified_progress = Column(Float, default=0.0)
-    verified_status = Column(String, default="pending")
+    # "verified_status" is the canonical name; "status" exposed as property for compatibility
+    verified_status = Column(String, default="pending_review")
 
     reviewer = Column(String, nullable=True)
     review_comment = Column(String, nullable=True)
+
+    @property
+    def status(self):
+        return self.verified_status
+
+    @status.setter
+    def status(self, value):
+        self.verified_status = value
+
 
 class ScheduleDeviation(Base):
     __tablename__ = "schedule_deviations"

@@ -1,0 +1,31 @@
+activity_id,project_id,wbs_code,level,activity_name,discipline,location,planned_start,planned_finish,planned_progress_pct,weight
+PIP-1001,PRJ-DEMO-01,1.1.1,L5,Foundation preparation,Civil,Unit 1,2026-08-20,2026-08-28,100,1.0
+PIP-1002,PRJ-DEMO-01,1.1.2,L5,Pipe support installation,Mechanical,Unit 3,2026-08-24,2026-09-05,80,1.0
+PIP-1003,PRJ-DEMO-01,1.1.3,L5,Spool fabrication,Piping,Fabrication Yard,2026-08-22,2026-09-04,90,1.0
+PIP-1004,PRJ-DEMO-01,1.1.4,L5,Erect Line 24-XX,Piping,Unit 3,2026-08-25,2026-09-02,100,1.0
+PIP-1005,PRJ-DEMO-01,1.1.5,L5,Welding inspection - Line 24-XX,Inspection,Unit 3,2026-08-28,2026-09-06,60,1.0
+PIP-1006,PRJ-DEMO-01,1.1.6,L5,Hydro testing - Line 24-XX,Testing,Unit 3,2026-09-01,2026-09-08,30,1.0
+PIP-1007,PRJ-DEMO-01,1.1.7,L5,Valve installation - Line 24-XX,Piping,Unit 3,2026-09-01,2026-09-07,70,1.0
+PIP-1008,PRJ-DEMO-01,1.1.8,L5,Painting / coating - Line 24-XX,Coating,Unit 3,2026-09-03,2026-09-10,20,1.0
+PIP-1009,PRJ-DEMO-01,1.1.9,L5,Pipe support alignment - Unit 3,Mechanical,Unit 3,2026-08-26,2026-09-04,85,0.8
+PIP-1010,PRJ-DEMO-01,1.1.10,L5,Gasket installation - Line 24-XX,Piping,Unit 3,2026-09-01,2026-09-06,55,0.7
+PIP-1011,PRJ-DEMO-01,1.1.11,L5,Flange alignment - Line 24-XX,Piping,Unit 3,2026-08-30,2026-09-05,65,0.8
+PIP-1012,PRJ-DEMO-01,1.1.12,L5,NDT inspection - Line 24-XX,Inspection,Unit 3,2026-09-01,2026-09-07,45,0.6
+PIP-1013,PRJ-DEMO-01,1.1.13,L5,Pressure gauge installation,Instrumentation,Unit 3,2026-09-02,2026-09-08,40,0.5
+PIP-1014,PRJ-DEMO-01,1.1.14,L5,Instrument tubing installation,Instrumentation,Unit 3,2026-09-02,2026-09-09,35,0.6
+PIP-1015,PRJ-DEMO-01,1.1.15,L5,Cable tray installation,Electrical,Unit 4,2026-08-25,2026-09-05,75,0.9
+PIP-1016,PRJ-DEMO-01,1.1.16,L5,Earthing connection installation,Electrical,Unit 4,2026-08-27,2026-09-06,70,0.8
+PIP-1017,PRJ-DEMO-01,1.1.17,L5,Lighting fixture installation,Electrical,Unit 4,2026-09-01,2026-09-10,25,0.5
+PIP-1018,PRJ-DEMO-01,1.1.18,L5,Structural column erection - Grid B,Structural,Unit 2,2026-08-18,2026-08-30,100,1.0
+PIP-1019,PRJ-DEMO-01,1.1.19,L5,Structural beam erection - Grid B,Structural,Unit 2,2026-08-22,2026-09-02,90,1.0
+PIP-1020,PRJ-DEMO-01,1.1.20,L5,Equipment foundation grouting,Civil,Unit 2,2026-08-28,2026-09-04,70,0.9
+PIP-1021,PRJ-DEMO-01,1.1.21,L5,Pump base plate installation,Mechanical,Unit 2,2026-08-29,2026-09-06,60,0.8
+PIP-1022,PRJ-DEMO-01,1.1.22,L5,Pump alignment,Mechanical,Unit 2,2026-09-01,2026-09-07,35,0.7
+PIP-1023,PRJ-DEMO-01,1.1.23,L5,Equipment electrical connection,Electrical,Unit 2,2026-09-02,2026-09-09,20,0.6
+PIP-1024,PRJ-DEMO-01,1.1.24,L5,Fire water header installation,Fire Protection,Unit 5,2026-08-24,2026-09-04,85,1.0
+PIP-1025,PRJ-DEMO-01,1.1.25,L5,Fire hydrant installation,Fire Protection,Unit 5,2026-08-28,2026-09-07,50,0.8
+PIP-1026,PRJ-DEMO-01,1.1.26,L5,Cable pulling - Control Room,Electrical,Unit 6,2026-08-30,2026-09-08,45,0.8
+PIP-1027,PRJ-DEMO-01,1.1.27,L5,Junction box installation,Instrumentation,Unit 6,2026-09-01,2026-09-08,40,0.5
+PIP-1028,PRJ-DEMO-01,1.1.28,L5,Control panel installation,Instrumentation,Unit 6,2026-09-02,2026-09-10,25,0.6
+PIP-1029,PRJ-DEMO-01,1.1.29,L5,Area drainage installation,Civil,Unit 5,2026-08-25,2026-09-06,65,0.8
+PIP-1030,PRJ-DEMO-01,1.1.30,L5,Final equipment tagging,Commissioning,Unit 3,2026-09-03,2026-09-10,10,0.4

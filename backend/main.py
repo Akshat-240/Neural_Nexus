@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
-from database import engine, Base, SessionLocal
-from models import (
+from .database import engine, Base, SessionLocal
+from .models import (
     Project,
     Activity,
     FieldUpdate,
@@ -12,7 +12,7 @@ from models import (
     ScheduleDeviation
 )
 
-from schemas import (
+from .schemas import (
     ProjectCreate,
     ProjectResponse,
     ActivityCreate,
@@ -29,7 +29,7 @@ from schemas import (
     ScheduleDeviationResponse
 )
 
-from crud import (
+from .crud import (
     create_project,
     get_projects,
     create_activity,

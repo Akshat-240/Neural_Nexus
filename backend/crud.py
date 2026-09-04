@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from models import (
+from .models import (
     Project,
     Activity,
     FieldUpdate,
@@ -10,7 +10,7 @@ from models import (
     ScheduleDeviation
 )
 
-from schemas import (
+from .schemas import (
     ProjectCreate,
     ActivityCreate,
     FieldUpdateCreate,

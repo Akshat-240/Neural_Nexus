@@ -1,28 +1,22 @@
 {
   "case_id": "CASE-B",
   "case_name": "human_review",
-
   "input": {
+    "project_id": "PRJ-DEMO-01",
     "source_type": "text",
     "source_ref": "daily_report_case_B",
-    "raw_text": "Line 24 work completed."
+    "raw_text": "Line 24 work completed.",
+    "image_ref": null
   },
-
   "expected": {
-    "possible_activities": [
-      "PIP-1024",
-      "PIP-1025",
-      "PIP-1026",
-      "PIP-1027"
+    "candidate_activities": [
+      "PIP-1004",
+      "PIP-1005",
+      "PIP-1006",
+      "PIP-1007"
     ],
-
     "confidence_band": "review",
-    "max_expected_confidence": 0.89,
-
     "review_required": true,
-
-    "review_reason": "Multiple schedule activities relate to Line 24 but the field statement does not identify the exact work type.",
-
     "automatic_schedule_update": false
   }
 }

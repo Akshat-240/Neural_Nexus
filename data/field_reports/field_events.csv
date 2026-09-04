@@ -1,0 +1,31 @@
+event_id,project_id,timestamp,source_type,raw_text,expected_activity_id,expected_status,expected_progress_pct
+EVT-0001,PRJ-DEMO-01,2026-09-03T16:30:00,text,24-XX spool erected today at Unit 3.,PIP-1004,completed,100
+EVT-0002,PRJ-DEMO-01,2026-09-03T17:00:00,text,Line 24 work completed.,,completed,
+EVT-0003,PRJ-DEMO-01,2026-09-03T17:10:00,text,Pipe support installation is approximately 50 percent complete at Unit 3.,PIP-1002,in_progress,50
+EVT-0004,PRJ-DEMO-01,2026-09-03T15:20:00,text,Fabrication for 24-XX spool is at 90 percent.,PIP-1003,in_progress,90
+EVT-0005,PRJ-DEMO-01,2026-09-03T14:40:00,text,Valve 24-XX mounting is progressing in Unit 3.,PIP-1007,in_progress,70
+EVT-0006,PRJ-DEMO-01,2026-09-03T13:50:00,text,Welding inspection for the 24 line has started.,PIP-1005,in_progress,45
+EVT-0007,PRJ-DEMO-01,2026-09-03T12:40:00,text,Support installation at Unit 3 is only halfway done.,PIP-1002,in_progress,50
+EVT-0008,PRJ-DEMO-01,2026-09-03T12:05:00,text,The coating crew has finished about one-fifth of Line 24.,PIP-1008,in_progress,20
+EVT-0009,PRJ-DEMO-01,2026-09-03T11:30:00,text,Line 24 hydro test preparation is underway.,PIP-1006,in_progress,25
+EVT-0010,PRJ-DEMO-01,2026-09-03T11:00:00,text,Pipe supports installed and aligned in Unit 3.,PIP-1009,in_progress,85
+EVT-0011,PRJ-DEMO-01,2026-09-03T10:35:00,text,24-XX flange alignment completed.,PIP-1011,completed,65
+EVT-0012,PRJ-DEMO-01,2026-09-03T10:10:00,text,Inspection complete for the 24 line.,,completed,
+EVT-0013,PRJ-DEMO-01,2026-09-03T09:45:00,text,Pump base plate is installed in Unit 2.,PIP-1021,completed,60
+EVT-0014,PRJ-DEMO-01,2026-09-03T09:20:00,text,Pump alignment work is 35 percent done.,PIP-1022,in_progress,35
+EVT-0015,PRJ-DEMO-01,2026-09-03T08:55:00,text,Fire water header installation reached 85 percent at Unit 5.,PIP-1024,in_progress,85
+EVT-0016,PRJ-DEMO-01,2026-09-03T08:40:00,text,Hydrant fixing started in Unit 5.,PIP-1025,in_progress,20
+EVT-0017,PRJ-DEMO-01,2026-09-02T17:15:00,text,Cable trays in Unit 4 are nearly complete.,PIP-1015,in_progress,75
+EVT-0018,PRJ-DEMO-01,2026-09-02T16:50:00,text,Grid B columns erected.,PIP-1018,completed,100
+EVT-0019,PRJ-DEMO-01,2026-09-02T16:15:00,text,"Beam work on Grid B is progressing, 90 percent complete.",PIP-1019,in_progress,90
+EVT-0020,PRJ-DEMO-01,2026-09-02T15:30:00,text,Gauges are being installed at Unit 3.,PIP-1013,in_progress,40
+EVT-0021,PRJ-DEMO-01,2026-09-02T14:50:00,text,Control Room cable pulling is underway.,PIP-1026,in_progress,45
+EVT-0022,PRJ-DEMO-01,2026-09-02T14:15:00,text,Junction boxes are about 40 percent installed.,PIP-1027,in_progress,40
+EVT-0023,PRJ-DEMO-01,2026-09-02T13:40:00,text,Final equipment tags started in Unit 3.,PIP-1030,in_progress,10
+EVT-0024,PRJ-DEMO-01,2026-09-02T13:05:00,text,24-XX NDT check completed on the line.,PIP-1012,completed,45
+EVT-0025,PRJ-DEMO-01,2026-09-02T12:30:00,text,Gasket fitting on Line 24 is around 55 percent.,PIP-1010,in_progress,55
+EVT-0026,PRJ-DEMO-01,2026-09-02T11:55:00,text,Line 24 painting is underway.,PIP-1008,in_progress,20
+EVT-0027,PRJ-DEMO-01,2026-09-02T11:20:00,text,Spool work completed for 24-XX.,,completed,
+EVT-0028,PRJ-DEMO-01,2026-09-02T10:45:00,text,Work at Unit 3 completed today.,,completed,
+EVT-0029,PRJ-DEMO-01,2026-09-02T10:10:00,text,Pressure testing activity delayed due to test preparation.,PIP-1006,in_progress,20
+EVT-0030,PRJ-DEMO-01,2026-09-02T09:30:00,text,Valve installation on line 24 is complete.,PIP-1007,completed,70

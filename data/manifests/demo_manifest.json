@@ -2,28 +2,27 @@
   "dataset_id": "NEURAL-NEXUS-DEMO-01",
   "version": "1.0.0",
   "project_id": "PRJ-DEMO-01",
-
-  "cases": [
-    {
-      "case_id": "CASE-A",
-      "file": "data/demo/case_A_high_confidence.json",
-      "fixture": "tests/fixtures/field_event_high_confidence.json",
-      "expected_activity_id": "PIP-1024",
-      "expected_review_required": false
-    },
-    {
-      "case_id": "CASE-B",
-      "file": "data/demo/case_B_human_review.json",
-      "fixture": "tests/fixtures/field_event_ambiguous.json",
-      "expected_review_required": true
-    },
-    {
-      "case_id": "CASE-C",
-      "file": "data/demo/case_C_deviation.json",
-      "fixture": "tests/fixtures/field_event_deviation.json",
-      "expected_activity_id": "PIP-1022",
-      "expected_variance_pct": -30.0,
-      "expected_deviation_flag": true
-    }
+  "counts": {
+    "schedule_activities": 30,
+    "field_events": 30,
+    "evidence_records": 12,
+    "required_demo_cases": 3
+  },
+  "files": {
+    "schedule": "data/schedules/demo_schedule.csv",
+    "field_events": "data/field_reports/field_events.csv",
+    "ground_truth": "data/manifests/ground_truth.json",
+    "image_manifest": "data/manifests/image_manifest.csv",
+    "cases": [
+      "data/demo/case_A_high_confidence.json",
+      "data/demo/case_B_human_review.json",
+      "data/demo/case_C_deviation.json"
+    ]
+  },
+  "rules": [
+    "Do not change canonical activity IDs during the hackathon.",
+    "Expected activity labels are evaluation-only and must not be provided to the model during inference.",
+    "Case B must route to human review.",
+    "Case C must produce a -30 percentage-point variance and deviation flag."
   ]
 }

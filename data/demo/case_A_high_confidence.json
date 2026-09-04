@@ -1,33 +1,18 @@
 {
   "case_id": "CASE-A",
   "case_name": "high_confidence",
-
   "input": {
+    "project_id": "PRJ-DEMO-01",
     "source_type": "text",
     "source_ref": "daily_report_case_A",
-    "raw_text": "24-XX spool erected today at Unit 3."
+    "raw_text": "24-XX spool erected today at Unit 3.",
+    "image_ref": "case_A_spool_erection.jpg"
   },
-
   "expected": {
-    "activity_id": "PIP-1024",
-    "activity_name": "Erect Line 24-XX",
-    "discipline": "Piping",
-    "location": "Unit 3",
-    "status": "completed",
-
+    "activity_id": "PIP-1004",
     "confidence_band": "high",
-    "min_expected_confidence": 0.90,
-
     "review_required": false,
-
-    "evidence": {
-      "required": true,
-      "expected_support": true
-    },
-
-    "schedule_update": {
-      "required": true,
-      "actual_progress_pct": 100.0
-    }
+    "evidence_supportive": true,
+    "actual_progress_pct": 100
   }
 }

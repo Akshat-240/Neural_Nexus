@@ -1,0 +1,13 @@
+evidence_id,event_id,file_name,expected_activity_id,expected_signal,image_quality
+EVD-0001,EVT-0001,case_A_spool_erection.jpg,PIP-1004,supportive,clear
+EVD-0002,EVT-0004,case_spool_fabrication.jpg,PIP-1003,supportive,clear
+EVD-0003,EVT-0005,case_valve_installation.jpg,PIP-1007,supportive,clear
+EVD-0004,EVT-0007,case_support_installation.jpg,PIP-1002,supportive,medium
+EVD-0005,EVT-0015,case_fire_header.jpg,PIP-1024,supportive,clear
+EVD-0006,EVT-0016,case_hydrant.jpg,PIP-1025,supportive,medium
+EVD-0007,EVT-0018,case_column_erection.jpg,PIP-1018,supportive,clear
+EVD-0008,EVT-0021,case_cable_pulling.jpg,PIP-1026,supportive,medium
+EVD-0009,EVT-0024,case_ndt_inspection.jpg,PIP-1012,supportive,clear
+EVD-0010,EVT-0026,case_painting.jpg,PIP-1008,supportive,weak
+EVD-0011,EVT-0002,case_ambiguous_line24.jpg,,ambiguous,poor
+EVD-0012,EVT-0029,case_test_prep.jpg,PIP-1006,conflicting,occluded

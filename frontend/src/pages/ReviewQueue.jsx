@@ -1,215 +1,144 @@
-import React, { useState } from "react";
-import "../App.css";
+import React, { useEffect, useState } from "react";
+import { api } from "../api/client";
 
-export default function ReviewQueue() {
-  const [selectedEvent, setSelectedEvent] = useState(null);
+function ReviewCard({ review, activities, onDecision }) {
+  const [correctedId, setCorrectedId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const events = [
-    {
-      id: "EVT-1007",
-      event: "Line 24 work completed",
-      match: "P-101 / PIP-102 / PIP-103",
-      confidence: "81%",
-      statement: '"Line 24 work completed."',
-      source: "Daily report · 03 Sep 2026 · Unit 3",
-      candidates: [
-        ["PIP-1024", "Erect Line 24-XX", "0.81"],
-        ["PIP-1025", "Welding inspection · Line 24-XX", "0.79"],
-        ["PIP-1026", "Hydro testing · Line 24-XX", "0.77"],
-        ["PIP-1027", "Valve installation · Line 24-XX", "0.74"],
-      ],
-    },
-    {
-      id: "EVT-1005",
-      event: "Valve work near Unit 3",
-      match: "P-102 / PIP-103",
-      confidence: "78%",
-      statement: '"Valve work completed near Unit 3."',
-      source: "Field report · 03 Sep 2026 · Unit 3",
-      candidates: [
-        ["PIP-103", "Valve installation", "0.78"],
-        ["PIP-102", "Welding inspection", "0.71"],
-      ],
-    },
-    {
-      id: "EVT-1015",
-      event: "Hydro test completed",
-      match: "P-102",
-      confidence: "72%",
-      statement: '"Hydro test completed."',
-      source: "Daily report · 03 Sep 2026",
-      candidates: [
-        ["PIP-1026", "Hydro testing · Line 24-XX", "0.72"],
-      ],
-    },
-    {
-      id: "EVT-1011",
-      event: "Spool installed",
-      match: "PIP-103 / PIP-104",
-      confidence: "76%",
-      statement: '"Spool installed on Line 24."',
-      source: "Field report · Unit 3",
-      candidates: [
-        ["PIP-103", "Spool installation", "0.76"],
-        ["PIP-104", "Valve installation", "0.69"],
-      ],
-    },
-    {
-      id: "EVT-1009",
-      event: "Inspection finished on Line 24",
-      match: "PIP-101",
-      confidence: "83%",
-      statement: '"Inspection finished on Line 24."',
-      source: "Inspection report · 03 Sep 2026",
-      candidates: [
-        ["PIP-101", "Line inspection · 24-XX", "0.83"],
-      ],
-    },
-  ];
-
-  if (selectedEvent) {
-    return (
-      <div className="review-detail-page">
-        <div className="rq-top">
-          <div className="rq-unit">
-            North Processing Unit <span>LIVE</span>
-          </div>
-
-          <button
-            className="back-btn"
-            onClick={() => setSelectedEvent(null)}
-          >
-            ← Back to queue
-          </button>
-        </div>
-
-        <div className="review-detail-header">
-          <div>
-            <h1>Review {selectedEvent.id}</h1>
-            <p>Planner decision is required before any schedule update</p>
-          </div>
-          <div className="review-required">Review required</div>
-        </div>
-
-        <div className="review-detail-grid">
-
-          {/* LEFT */}
-          <div className="field-statement">
-            <h3>Field statement</h3>
-
-            <div className="statement-box">
-              {selectedEvent.statement}
-            </div>
-
-            <p className="statement-note">
-              The statement does not specify exactly which activity was
-              performed. Review candidate matches before approval.
-            </p>
-
-            <div className="detail-meta">
-              <div>
-                <span>SOURCE</span>
-                <p>{selectedEvent.source}</p>
-              </div>
-
-              <div>
-                <span>EVIDENCE</span>
-                <div className="no-photo">
-                  NO ATTACHED PHOTO
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="candidate-section">
-            <h3>Candidate activities</h3>
-
-            <div className="candidate-list">
-              {selectedEvent.candidates.map((candidate, index) => (
-                <div
-                  className={`candidate-row ${
-                    index === 0 ? "candidate-selected" : ""
-                  }`}
-                  key={index}
-                >
-                  <div>
-                    <span className="candidate-id">{candidate[0]}</span>
-                    <p>{candidate[1]}</p>
-                  </div>
-
-                  <strong>{candidate[2]}</strong>
-                </div>
-              ))}
-            </div>
-
-            <div className="planner-decision">
-              <span>PLANNER DECISION</span>
-              <p>Select the activity that actually occurred</p>
-
-              <div className="decision-buttons">
-                <button className="approve-btn">
-                  Approve {selectedEvent.candidates[0][0]}
-                </button>
-
-                <button className="correct-btn">
-                  Correct match
-                </button>
-
-                <button className="reject-btn">
-                  Reject event
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const submit = async (decision) => {
+    if (decision === "correct" && !correctedId) {
+      alert("Select an activity to correct to.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await onDecision(review.db_id, decision, decision === "correct" ? correctedId : undefined);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="rq-page">
-      <div className="rq-top">
-        <div className="rq-unit">
-          North Processing Unit <span>LIVE</span>
+    <div style={{
+      background: "#fff", border: "1px solid #e2e8f0", borderRadius: "8px",
+      padding: "1.5rem", marginBottom: "1.5rem", borderLeft: "4px solid #f59e0b"
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+        <strong style={{ color: "#0f172a" }}>{review.event_id}</strong>
+        <span style={{ fontSize: "0.8rem", background: "#fef3c7", color: "#92400e", padding: "0.2rem 0.6rem", borderRadius: "4px" }}>
+          Pending Review
+        </span>
+      </div>
+
+      <div style={{ background: "#f8fafc", borderRadius: "6px", padding: "1rem", marginBottom: "1rem", fontStyle: "italic", color: "#334155" }}>
+        "{review.report_text}"
+      </div>
+
+      <div style={{ marginBottom: "0.5rem", fontSize: "0.85rem", color: "#64748b" }}>
+        <strong>Proposed match:</strong> {review.proposed_activity_id} — {review.proposed_activity_name}
+        &nbsp;({review.confidence != null ? `${(review.confidence * 100).toFixed(0)}% confidence` : "—"})
+      </div>
+
+      <div style={{ marginBottom: "0.5rem", fontSize: "0.85rem", color: "#ef4444" }}>
+        <strong>Reason:</strong> {review.reason}
+      </div>
+
+      {/* Correct: pick a different activity */}
+      <div style={{ marginTop: "1rem" }}>
+        <label style={{ fontSize: "0.85rem", color: "#475569", display: "block", marginBottom: "0.25rem" }}>
+          Correct to activity:
+        </label>
+        <select
+          value={correctedId}
+          onChange={e => setCorrectedId(e.target.value)}
+          style={{ width: "100%", padding: "0.5rem", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "0.9rem" }}
+        >
+          <option value="">— keep proposed —</option>
+          {activities.map(a => (
+            <option key={a.activity_id} value={a.activity_id}>
+              {a.activity_id} · {a.activity_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem" }}>
+        <button
+          disabled={submitting}
+          onClick={() => submit("approve")}
+          style={{ flex: 1, padding: "0.6rem", background: "#16a34a", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: 600 }}
+        >
+          Approve
+        </button>
+        <button
+          disabled={submitting || !correctedId}
+          onClick={() => submit("correct")}
+          style={{ flex: 1, padding: "0.6rem", background: "#3b82f6", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: 600, opacity: correctedId ? 1 : 0.5 }}
+        >
+          Correct Match
+        </button>
+        <button
+          disabled={submitting}
+          onClick={() => submit("reject")}
+          style={{ flex: 1, padding: "0.6rem", background: "white", color: "#ef4444", border: "1px solid #ef4444", borderRadius: "6px", cursor: "pointer", fontWeight: 600 }}
+        >
+          Reject
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function ReviewQueue() {
+  const [reviews, setReviews]     = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
+
+  const load = () => {
+    setLoading(true);
+    Promise.all([api.getReviews(), api.getActivities()])
+      .then(([r, a]) => { setReviews(r); setActivities(a); setError(null); })
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handleDecision = async (dbId, decision, activityId) => {
+    await api.submitReview({ db_id: dbId, decision, activity_id: activityId });
+    load(); // Refresh queue after decision
+  };
+
+  return (
+    <div style={{ padding: "2rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
+        <div>
+          <h1>Review Queue</h1>
+          <p style={{ color: "#64748b" }}>Human-in-the-loop verification for ambiguous field events</p>
         </div>
+        <button onClick={load} style={{ fontSize: "0.85rem", color: "#3b82f6", background: "none", border: "1px solid #3b82f6", borderRadius: "4px", padding: "0.4rem 0.8rem", cursor: "pointer" }}>
+          ↻ Refresh
+        </button>
+      </div>
 
-        <div className="rq-awaiting">
-          5 awaiting review
+      {loading && <p style={{ color: "#64748b" }}>Loading review queue…</p>}
+      {error   && <p style={{ color: "red" }}>Error: {error}</p>}
+      {!loading && !error && reviews.length === 0 && (
+        <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "1.5rem", textAlign: "center" }}>
+          <div style={{ fontSize: "1.5rem" }}>✓</div>
+          <h3 style={{ color: "#16a34a", margin: "0.5rem 0" }}>Queue is clear</h3>
+          <p style={{ color: "#64748b" }}>All field events have been resolved.</p>
         </div>
-      </div>
-
-      <div className="rq-heading">
-        <h1>Human review queue</h1>
-        <p>Only uncertain, ambiguous or conflicting events appear here.</p>
-      </div>
-
-      <div className="rq-tabs">
-        <button className="rq-active">All 5</button>
-        <button>High risk</button>
-        <button>Ambiguous</button>
-        <button>Evidence conflict</button>
-      </div>
-
-      <div className="rq-content">
-        <h3>Events requiring planner decision</h3>
-
-        {events.map((item) => (
-          <div className="rq-row" key={item.id}>
-            <div className="rq-id">{item.id}</div>
-            <div className="rq-event">{item.event}</div>
-            <div className="rq-match">{item.match}</div>
-            <div className="rq-confidence">{item.confidence}</div>
-
-            <button
-              className="rq-review"
-              onClick={() => setSelectedEvent(item)}
-            >
-              Review
-            </button>
-          </div>
-        ))}
-      </div>
+      )}
+      {!loading && !error && reviews.map(r => (
+        <ReviewCard
+          key={r.event_id}
+          review={r}
+          activities={activities}
+          onDecision={handleDecision}
+        />
+      ))}
     </div>
   );
 }

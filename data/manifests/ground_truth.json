@@ -1,0 +1,212 @@
+[
+  {
+    "event_id": "EVT-0001",
+    "expected_activity_id": "PIP-1004",
+    "expected_status": "completed",
+    "expected_progress_pct": 100,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0002",
+    "expected_activity_id": null,
+    "expected_status": "completed",
+    "expected_progress_pct": null,
+    "review_expected": true
+  },
+  {
+    "event_id": "EVT-0003",
+    "expected_activity_id": "PIP-1002",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 50,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0004",
+    "expected_activity_id": "PIP-1003",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 90,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0005",
+    "expected_activity_id": "PIP-1007",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 70,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0006",
+    "expected_activity_id": "PIP-1005",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 45,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0007",
+    "expected_activity_id": "PIP-1002",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 50,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0008",
+    "expected_activity_id": "PIP-1008",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 20,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0009",
+    "expected_activity_id": "PIP-1006",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 25,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0010",
+    "expected_activity_id": "PIP-1009",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 85,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0011",
+    "expected_activity_id": "PIP-1011",
+    "expected_status": "completed",
+    "expected_progress_pct": 65,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0012",
+    "expected_activity_id": null,
+    "expected_status": "completed",
+    "expected_progress_pct": null,
+    "review_expected": true
+  },
+  {
+    "event_id": "EVT-0013",
+    "expected_activity_id": "PIP-1021",
+    "expected_status": "completed",
+    "expected_progress_pct": 60,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0014",
+    "expected_activity_id": "PIP-1022",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 35,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0015",
+    "expected_activity_id": "PIP-1024",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 85,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0016",
+    "expected_activity_id": "PIP-1025",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 20,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0017",
+    "expected_activity_id": "PIP-1015",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 75,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0018",
+    "expected_activity_id": "PIP-1018",
+    "expected_status": "completed",
+    "expected_progress_pct": 100,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0019",
+    "expected_activity_id": "PIP-1019",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 90,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0020",
+    "expected_activity_id": "PIP-1013",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 40,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0021",
+    "expected_activity_id": "PIP-1026",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 45,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0022",
+    "expected_activity_id": "PIP-1027",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 40,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0023",
+    "expected_activity_id": "PIP-1030",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 10,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0024",
+    "expected_activity_id": "PIP-1012",
+    "expected_status": "completed",
+    "expected_progress_pct": 45,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0025",
+    "expected_activity_id": "PIP-1010",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 55,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0026",
+    "expected_activity_id": "PIP-1008",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 20,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0027",
+    "expected_activity_id": null,
+    "expected_status": "completed",
+    "expected_progress_pct": null,
+    "review_expected": true
+  },
+  {
+    "event_id": "EVT-0028",
+    "expected_activity_id": null,
+    "expected_status": "completed",
+    "expected_progress_pct": null,
+    "review_expected": true
+  },
+  {
+    "event_id": "EVT-0029",
+    "expected_activity_id": "PIP-1006",
+    "expected_status": "in_progress",
+    "expected_progress_pct": 20,
+    "review_expected": false
+  },
+  {
+    "event_id": "EVT-0030",
+    "expected_activity_id": "PIP-1007",
+    "expected_status": "completed",
+    "expected_progress_pct": 70,
+    "review_expected": false
+  }
+]
