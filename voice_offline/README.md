@@ -1,49 +1,49 @@
-# Voice & Offline Field Input Module 
+# Voice & Offline Field Input Module (Person 5)
 
 > **Neural Nexus — SIH 2026 — PS 26122**  
-> **Role Owner**:Voice + Offline Field Input
+> **Role Owner**: Person 5 (Voice + Offline Field Input)
 
 ## Overview
 The **Voice & Offline Field Input Module** eliminates field update friction by allowing field engineers and workers to report site progress via voice recordings or quick Hinglish voice notes—even without an active internet connection.
 
-It transcribes audio, normalizes local jargon (Hinglish/abbreviations), extracts canonical **Field Event** structures matching the team's shared contract (`contracts/schemas/field_event.json`), persists updates safely in a local **SQLite queue**, and automatically synchronizes queued updates when connected to the backend API.
+It transcribes audio, normalizes local jargon (Hinglish/abbreviations), extracts canonical **Field Event** structures matching the team's shared contract (), persists updates safely in a local **SQLite queue**, and automatically synchronizes queued updates when connected to the backend API.
 
 ---
 
 ## Key Features
 
-1. **Speech-to-Text (STT) Engine** (`stt.py`)
+1. **Speech-to-Text (STT) Engine** ()
    - Uses local **Whisper** model when available.
    - Includes automatic acoustic/metadata fallback for demo audio notes when running in lightweight environments without Whisper weights.
    - Native WAV/PCM header inspection.
 
-2. **Hinglish & Jargon Normalization** (`stt.py` & `extractor.py`)
+2. **Hinglish & Jargon Normalization** ( & )
    - Converts Indian construction shorthand and Hinglish voice notes into standard English terms:
-     - *"Unit 3 par 24-XX spool erection ho gaya hai"* -> *"24-XX spool erected today at Unit 3."*
+     - *"Unit 3 par 24-XX spool erection ho gaya hai"* $\rightarrow$ *"24-XX spool erected today at Unit 3."*
 
-3. **Canonical Field Event Extraction** (`extractor.py`)
-   - Outputs 100% schema-compliant `Field Event` JSON matching `contracts/schemas/field_event.json`:
-     - `event_id`, `project_id`, `source`, `raw_text`, `extracted` (`activity`, `discipline`, `status`, `actual_start`, `actual_end`, `location`, `asset_or_reference`, `context`), `evidence_refs`, `extraction_confidence`, `created_at`.
+3. **Canonical Field Event Extraction** ()
+   - Outputs 100% schema-compliant  JSON matching :
+     - , , , ,  (, , , , , , , ), , , .
 
-4. **Persistent Offline SQLite Queue** (`offline_queue.py`)
-   - SQLite store (`voice_offline/data/voice_offline.db`).
-   - Tracks event status (`pending`, `synced`, `failed`), retry counters, error logs, and local audio references.
+4. **Persistent Offline SQLite Queue** ()
+   - SQLite store ().
+   - Tracks event status (, , ), retry counters, error logs, and local audio references.
 
-5. **Automatic Backend Sync Engine** (`sync_engine.py`)
+5. **Automatic Backend Sync Engine** ()
    - Checks backend reachability before sending.
-   - Flushes pending events to `POST /api/v1/field-events`.
+   - Flushes pending events to .
    - Handles offline network errors gracefully without data loss.
 
-6. **FastAPI Microservice** (`api.py`)
+6. **FastAPI Microservice** ()
    - REST endpoints for frontend & integration layer:
-     - `POST /api/v1/voice/transcribe`
-     - `POST /api/v1/voice/process`
-     - `POST /api/v1/voice/process-and-queue`
-     - `POST /api/v1/voice/enqueue`
-     - `POST /api/v1/voice/sync`
-     - `GET /api/v1/voice/queue`
+     - 
+     - 
+     - 
+     - 
+     - 
+     - 
 
-7. **Demo Generator & CLI Tool** (`generator.py` & `cli.py`)
+7. **Demo Generator & CLI Tool** ( & )
    - Synthetic 16-bit PCM WAV audio generator for Case A (High Confidence), Case B (Human Review), and Case C (Deviation).
    - Full command-line interface for offline testing and demo presentations.
 
@@ -51,70 +51,23 @@ It transcribes audio, normalizes local jargon (Hinglish/abbreviations), extracts
 
 ## Directory Structure
 
-```text
-voice_offline/
-├── __init__.py           # Package initialization
-├── config.py             # Global paths, endpoints, and default project settings
-├── stt.py                # Speech-to-Text engine & Hinglish translator
-├── extractor.py          # Field Event JSON schema builder
-├── offline_queue.py      # SQLite persistent queue manager
-├── sync_engine.py        # Network checker & backend sync engine
-├── generator.py          # Synthetic PCM WAV generator for demo audio notes
-├── api.py                # FastAPI REST API router & standalone app
-├── cli.py                # Command Line Interface
-├── requirements.txt      # Module dependencies
-└── README.md             # Technical documentation
-```
+
 
 ---
 
 ## Quick Start & CLI Usage
 
 ### 1. Generate Synthetic Demo Audio Files
-```bash
-python3 -m voice_offline.cli generate-demo
-```
-*Outputs sample WAV files into `voice_offline/data/audio_store/` for Case A, Case B, and Case C.*
+[Success] Generated demo audio files:
+  - case_a: /Users/anujsaini/Desktop/sih/voice_offline/data/audio_store/case_a_voice_report.wav
+  - case_b: /Users/anujsaini/Desktop/sih/voice_offline/data/audio_store/case_b_voice_report.wav
+  - case_c: /Users/anujsaini/Desktop/sih/voice_offline/data/audio_store/case_c_voice_report.wav
+*Outputs sample WAV files into  for Case A, Case B, and Case C.*
 
 ### 2. Transcribe & Extract a Field Event from Audio
-```bash
-python3 -m voice_offline.cli process --file voice_offline/data/audio_store/case_a_voice_report.wav --enqueue
-```
-
-### 3. Inspect Offline Queue Status
-```bash
-python3 -m voice_offline.cli queue summary
-python3 -m voice_offline.cli queue list
-```
-
-### 4. Sync Queued Events to Backend API
-```bash
-python3 -m voice_offline.cli sync
-```
-
-### 5. Launch FastAPI Dev Server
-```bash
-python3 -m voice_offline.cli serve --port 8005
-```
-*Access interactive Swagger UI documentation at: `http://localhost:8005/docs`*
-
----
-
-## Testing
-
-Run unit & integration tests using standard Python unittest runner:
-
-```bash
-PYTHONPATH=. python3 tests/test_voice_offline.py
-```
-
----
-
-## Canonical Output Example
-
-```json
+[Enqueued into SQLite Offline Storage]
 {
-  "event_id": "EVT-VOICE-E0B3AE",
+  "event_id": "EVT-VOICE-690503",
   "project_id": "PRJ-DEMO-01",
   "source": {
     "type": "voice",
@@ -126,15 +79,53 @@ PYTHONPATH=. python3 tests/test_voice_offline.py
     "discipline": "Piping",
     "status": "completed",
     "actual_start": null,
-    "actual_end": "2026-09-04T15:16:34",
+    "actual_end": "2026-09-04T12:11:43",
     "location": "Unit 3",
     "asset_or_reference": "24-XX",
     "context": "Spool erection at Unit 3"
   },
   "evidence_refs": [
-    "EVD-VOICE-5AC0"
+    "EVD-VOICE-7698"
   ],
   "extraction_confidence": 0.93,
-  "created_at": "2026-09-04T15:16:34"
+  "created_at": "2026-09-04T12:11:43"
 }
-```
+
+### 3. Inspect Offline Queue Status
+{
+  "total": 2,
+  "pending": 2,
+  "synced": 0,
+  "failed": 0
+}
+Total Events in Queue: 2
+[PENDING] ID: EVT-VOICE-690503 | Text: 24-XX spool erected today at Unit 3. | Confidence: 0.93
+[PENDING] ID: EVT-VOICE-E0B3AE | Text: 24-XX spool erected today at Unit 3. | Confidence: 0.93
+
+### 4. Sync Queued Events to Backend API
+{
+  "status": "offline",
+  "message": "Backend server is unreachable. Events remain safely queued offline.",
+  "synced_count": 0,
+  "failed_count": 0,
+  "remaining_pending": 2,
+  "details": []
+}
+
+### 5. Launch FastAPI Dev Server
+Starting Voice Offline FastAPI server on http://127.0.0.1:8005
+*Access interactive Swagger UI documentation at: *
+
+---
+
+## Testing
+
+Run unit & integration tests using standard Python unittest runner:
+
+
+
+---
+
+## Canonical Output Example
+
+

@@ -5,11 +5,12 @@ from typing import Dict, Any, Optional, List
 from fastapi import FastAPI, APIRouter, File, UploadFile, Form, HTTPException, Query, BackgroundTasks
 from pydantic import BaseModel, Field
 
-from voice_offline.config import AUDIO_STORE_DIR, DEFAULT_PROJECT_ID
+from voice_offline.config import AUDIO_STORE_DIR, IMAGE_STORE_DIR, DEFAULT_PROJECT_ID
 from voice_offline.stt import SpeechToTextEngine
 from voice_offline.extractor import FieldEventExtractor
 from voice_offline.offline_queue import OfflineQueueManager
 from voice_offline.sync_engine import VoiceSyncEngine
+from voice_offline.image_processor import ImageEvidenceProcessor
 
 router = APIRouter(prefix="/api/v1/voice", tags=["Voice & Offline Field Input"])
 
@@ -17,6 +18,7 @@ stt_engine = SpeechToTextEngine()
 extractor = FieldEventExtractor()
 queue_mgr = OfflineQueueManager()
 sync_engine = VoiceSyncEngine(queue_manager=queue_mgr)
+image_processor = ImageEvidenceProcessor()
 
 
 class TextProcessRequest(BaseModel):
@@ -82,6 +84,73 @@ async def process_voice_event(
     return field_event
 
 
+@router.post("/process-image", summary="Process site photo evidence image")
+async def process_image_evidence(
+    image: UploadFile = File(...),
+    event_id: Optional[str] = Form(None),
+    activity_context: Optional[str] = Form(None)
+):
+    """
+    Upload site photo evidence (.jpg/.png), analyze with Azure Vision / Computer Vision,
+    and return canonical Evidence Result complying with contracts/schemas/evidence_result.json.
+    """
+    save_path = IMAGE_STORE_DIR / f"evidence_{image.filename}"
+    with open(save_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+
+    try:
+        evidence_result = image_processor.process_image(
+            image_path=str(save_path),
+            event_id=event_id,
+            activity_context=activity_context
+        )
+        return evidence_result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Image processing error: {str(e)}")
+
+
+@router.post("/process-multimodal", summary="Process combined voice audio and site photo evidence")
+async def process_multimodal_field_report(
+    audio: Optional[UploadFile] = File(None),
+    image: Optional[UploadFile] = File(None),
+    raw_text: Optional[str] = Form(None),
+    project_id: str = Form(DEFAULT_PROJECT_ID),
+    auto_enqueue: bool = Form(True)
+):
+    """
+    Combines voice transcription + photo evidence analysis into a linked field event and evidence record.
+    """
+    if not audio and not raw_text and not image:
+        raise HTTPException(status_code=400, detail="Provide audio, raw_text, or image upload.")
+
+    field_event = None
+    if audio or raw_text:
+        field_event = await process_voice_event(file=audio, raw_text=raw_text, project_id=project_id)
+
+    evidence_result = None
+    if image:
+        event_id = field_event["event_id"] if field_event else None
+        act_ctx = field_event["extracted"]["context"] if field_event else None
+        evidence_result = await process_image_evidence(image=image, event_id=event_id, activity_context=act_ctx)
+        
+        if field_event and evidence_result:
+            if "evidence_refs" not in field_event or not field_event["evidence_refs"]:
+                field_event["evidence_refs"] = []
+            field_event["evidence_refs"].append(evidence_result["evidence_id"])
+
+    queue_status = None
+    if auto_enqueue and field_event:
+        audio_path = str(AUDIO_STORE_DIR / audio.filename) if audio else None
+        queue_mgr.enqueue_event(field_event, audio_path=audio_path)
+        queue_status = queue_mgr.get_queue_summary()
+
+    return {
+        "field_event": field_event,
+        "evidence_result": evidence_result,
+        "queue_status": queue_status
+    }
+
+
 @router.post("/enqueue", summary="Save Field Event into local offline queue")
 async def enqueue_field_event(event: Dict[str, Any]):
     """
@@ -112,8 +181,8 @@ async def process_and_queue_voice(
     saves to local offline queue, and optionally attempts backend sync.
     """
     field_event = await process_voice_event(file=file, raw_text=raw_text, project_id=project_id)
-    audio_path = str(AUDIO_STORE_DIR / f"voice_{Path(file.filename).name}") if file else None
-
+    audio_path = str(AUDIO_STORE_DIR / file.filename) if file else None
+    
     queued = queue_mgr.enqueue_event(field_event, audio_path=audio_path)
     
     sync_result = None
@@ -159,9 +228,9 @@ async def get_queue_status(status: Optional[str] = Query(None, description="pend
 
 # Standalone FastAPI App for independent running/testing
 app = FastAPI(
-    title="Neural Nexus - Voice Offline Field Input Service",
+    title="Neural Nexus - Voice & Image Offline Field Input Service",
     version="1.0.0",
-    description="Person 5 Voice & Offline Field Input Module API"
+    description="Person 5 Voice & Image Offline Field Input Module API"
 )
 app.include_router(router)
 

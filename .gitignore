@@ -1,6 +1,11 @@
 node_modules/
 __pycache__/
 *.pyc
+*.pyo
 *.pt
+*.db
 venv/
+.pytest_cache/
+.DS_Store
 test_annotated.jpg
+sih26122_db.sqlite
