@@ -76,7 +76,13 @@ class FieldReportExtractor:
 
         cleaned_text = raw_text.strip()
         timestamp = created_at or datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        evt_id = event_id or f"EVT-{abs(hash(cleaned_text)) % 10000:04d}"
+        if event_id:
+            evt_id = event_id
+        else:
+            import hashlib
+
+            digest = hashlib.sha1(cleaned_text.encode("utf-8")).hexdigest()
+            evt_id = f"EVT-{int(digest[:8], 16) % 10000:04d}"
         evidence = evidence_refs if evidence_refs is not None else []
 
         extracted_raw: Optional[Dict[str, Any]] = None
@@ -127,8 +133,7 @@ class FieldReportExtractor:
         lower = text.lower()
 
         # 1. Location
-        location = normalize_location(text) or "Unit 3"
-
+        location = normalize_location(text)
         # 2. Asset or line tag
         asset = extract_and_normalize_asset(text)
 

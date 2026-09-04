@@ -95,14 +95,13 @@ class MatchExplainer:
         extracted = field_event.get("extracted", {})
         asset = extracted.get("asset_or_reference")
 
-        # Case B: Ambiguous Line 24 activities
-        if is_ambiguous or (asset == "24-XX" and "work" in raw_text and "erect" not in raw_text and "weld" not in raw_text):
+        # Case B: Ambiguous Line 24 activities (generic "work" phrasing)
+        if asset == "24-XX" and "work" in raw_text and "erect" not in raw_text and "weld" not in raw_text:
             return "Multiple schedule activities relate to Line 24 but the field statement does not identify the exact work type."
 
         if is_ambiguous:
             names = [c.get("activity_name", "") for c in top_candidates[:3]]
             return f"Ambiguous match across multiple similar activities: {', '.join(names)}."
-
         if final_confidence < 0.75:
             return f"Confidence score ({final_confidence:.2f}) falls in reject_or_correct band. Mandatory planner review."
 

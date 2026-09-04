@@ -124,15 +124,17 @@ class SemanticEmbedder:
         if not words:
             return vec
 
+        import zlib
+
         # 1. Word tokens (with higher weight)
         for w in words:
-            idx = abs(hash(f"word_{w}")) % self.dim
+            idx = zlib.crc32(f"word_{w}".encode("utf-8")) % self.dim
             vec[idx] += 2.0
 
         # 2. Word bi-grams
         for i in range(len(words) - 1):
             bigram = f"{words[i]}_{words[i+1]}"
-            idx = abs(hash(f"bi_{bigram}")) % self.dim
+            idx = zlib.crc32(f"bi_{bigram}".encode("utf-8")) % self.dim
             vec[idx] += 1.5
 
         # 3. Character 3-grams and 4-grams for subword morphological matching
@@ -142,7 +144,7 @@ class SemanticEmbedder:
                 if len(w_padded) >= n:
                     for i in range(len(w_padded) - n + 1):
                         ngram = w_padded[i : i + n]
-                        idx = abs(hash(f"ng_{ngram}")) % self.dim
+                        idx = zlib.crc32(f"ng_{ngram}".encode("utf-8")) % self.dim
                         vec[idx] += 0.5
 
         # Sublinear term frequency scaling: 1 + log(tf)

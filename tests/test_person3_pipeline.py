@@ -1,9 +1,7 @@
 """Comprehensive unit and integration tests for Person 3 AI/ML Pipeline."""
 
 import json
-import os
 import unittest
-
 from ai.extraction.extractor import FieldReportExtractor
 from ai.extraction.normalizer import (
     extract_and_normalize_asset,

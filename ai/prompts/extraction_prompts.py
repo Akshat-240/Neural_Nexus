@@ -8,11 +8,9 @@ Your task is to analyze unstructured field notes and daily progress reports from
 You must extract the following fields strictly into a JSON object:
 - "activity": Concise description of the construction task performed (e.g., "24-XX spool erection", "Pipe support installation").
 - "discipline": Engineering discipline. Choose from ["Piping", "Mechanical", "Civil", "Electrical", "Instrumentation", "Structural"].
-- "status": Work status. Choose from ["completed", "in_progress", "not_started", "interrupted"].
 - "actual_start": ISO8601 timestamp string if mentioned, or null.
-- "actual_end": ISO8601 timestamp string if completed today, or null.
+- "actual_end": ISO8601 timestamp string if explicitly mentioned, or null.
 - "location": Job site location, unit, plant, or area (e.g., "Unit 3", "Area 5", "Pipe Rack B").
-- "asset_or_reference": Pipe spool tag, line number, equipment tag, or drawing identifier if present (e.g., "24-XX", "Line 24", "P-101A").
 - "context": Additional context summarizing the activity and scope.
 - "progress_pct": Numerical percentage progress if explicitly specified in the text (e.g., 50.0 for 50%), or null if unspecified.
 - "confidence": Float between 0.0 and 1.0 indicating your confidence in the extraction based on specificity of details.

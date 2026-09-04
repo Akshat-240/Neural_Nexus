@@ -45,9 +45,14 @@ class ScheduleMatcher:
             Match result dict strictly conforming to contracts/schemas/match_result.json.
         """
         event_id = field_event.get("event_id", "EVT-0001")
-        m_id = match_id or f"MAT-{abs(hash(event_id)) % 10000:04d}"
-        timestamp = created_at or datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        if match_id:
+            m_id = match_id
+        else:
+            import hashlib
 
+            digest = hashlib.sha1(event_id.encode("utf-8")).hexdigest()
+            m_id = f"MAT-{int(digest[:8], 16) % 10000:04d}"
+        timestamp = created_at or datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         if not schedule_activities:
             return {
                 "match_id": m_id,

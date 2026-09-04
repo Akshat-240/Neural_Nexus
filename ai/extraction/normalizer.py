@@ -234,8 +234,7 @@ def normalize_field_event_data(extracted: Dict[str, Any], raw_text: str = "") ->
 
     # Normalize location
     raw_location = extracted.get("location")
-    location = normalize_location(raw_location) or normalize_location(combined_text) or "Unit 3"
-
+    location = normalize_location(raw_location) or normalize_location(combined_text)
     # Normalize asset/reference
     raw_asset = extracted.get("asset_or_reference")
     asset = extract_and_normalize_asset(raw_asset) or extract_and_normalize_asset(combined_text)

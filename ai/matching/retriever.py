@@ -2,8 +2,6 @@
 
 from typing import Any, Dict, List, Optional, Tuple
 
-import numpy as np
-
 from ai.matching.embedder import SemanticEmbedder
 
 

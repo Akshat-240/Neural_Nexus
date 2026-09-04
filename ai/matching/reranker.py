@@ -131,8 +131,7 @@ class ContextualReranker:
             conf = c["raw_confidence"]
             if is_ambiguous:
                 # Cap in the planner_review band (max 0.89)
-                conf = min(0.85, conf)
-
+                conf = min(0.89, conf)
             final_conf = round(float(conf), 2)
 
             final_candidates.append({
