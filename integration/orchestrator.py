@@ -131,6 +131,7 @@ class Orchestrator:
             # Return the unified State representation
             return {
                 "event_id": event_id,
+                "db_id": update_id,
                 "pipeline_status": verification["status"],
                 "field_event": {
                     "activity": field_event.get("extracted", {}).get("activity"),
