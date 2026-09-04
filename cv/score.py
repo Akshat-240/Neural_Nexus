@@ -42,8 +42,6 @@ def detect_pipe_like_shapes(image):
     total_lines = len(lines)
     confidence = min(1.0, max_parallel_group / 15)
 
-    print(f"[debug] total_lines={total_lines}, max_parallel_group={max_parallel_group}, confidence={confidence:.2f}")
-
     return confidence, total_lines
 
 def score_evidence(image_path, expected_activity):

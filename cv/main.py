@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from evidence import analyze_evidence
+
+from cv.evidence import analyze_evidence
 
 app = FastAPI()
 
@@ -11,4 +12,6 @@ class EvidenceRequest(BaseModel):
 
 @app.post("/evidence/analyze")
 def evidence_analyze(req: EvidenceRequest):
+    if req.image_ref.startswith(("/", "\\")) or ".." in req.image_ref:
+        raise HTTPException(status_code=400, detail="image_ref must be a relative path without '..'")
     return analyze_evidence(req.event_id, req.image_ref, req.candidate_activity_id)

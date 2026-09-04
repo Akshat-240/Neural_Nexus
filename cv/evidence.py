@@ -1,5 +1,7 @@
-from datetime import datetime
-from score import score_evidence
+from datetime import datetime, timezone
+
+from cv.score import score_evidence
+
 
 def analyze_evidence(event_id, image_path, candidate_activity_id, evidence_id="EVD-AUTO"):
     result = score_evidence(image_path, candidate_activity_id)
@@ -13,5 +15,5 @@ def analyze_evidence(event_id, image_path, candidate_activity_id, evidence_id="E
         },
         "analysis": result["analysis"],
         "annotation_ref": None,
-        "created_at": datetime.utcnow().isoformat()
+        "created_at": datetime.now(timezone.utc).isoformat()
     }

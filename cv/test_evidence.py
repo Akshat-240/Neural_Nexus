@@ -1,5 +1,8 @@
-from evidence import analyze_evidence
 import json
 
-output = analyze_evidence("EVT-0001", "test.jpg", "PIP-1024")
-print(json.dumps(output, indent=2))
+from cv.evidence import analyze_evidence
+
+
+if __name__ == "__main__":
+    output = analyze_evidence("EVT-0001", "test.jpg", "PIP-1024")
+    print(json.dumps(output, indent=2))
