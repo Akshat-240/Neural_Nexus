@@ -8,10 +8,11 @@ from voice_offline.stt import SpeechToTextEngine
 from voice_offline.extractor import FieldEventExtractor
 from voice_offline.offline_queue import OfflineQueueManager
 from voice_offline.sync_engine import VoiceSyncEngine
+from voice_offline.image_processor import ImageEvidenceProcessor
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Neural Nexus Voice Offline Module CLI (Person 5)")
+    parser = argparse.ArgumentParser(description="Neural Nexus Voice & Image Offline Module CLI (Person 5)")
     subparsers = parser.add_subparsers(dest="command", help="Sub-commands")
 
     # Generate demo command
@@ -21,6 +22,7 @@ def main():
     trans_parser = subparsers.add_parser("transcribe", help="Transcribe audio file or Hinglish text")
     trans_parser.add_argument("--file", "-f", help="Path to audio file (.wav/.mp3)")
     trans_parser.add_argument("--text", "-t", help="Raw voice text note")
+    trans_parser.add_argument("--engine", "-e", default="auto", help="STT Engine: auto | azure | whisper | fallback")
 
     # Process command
     proc_parser = subparsers.add_parser("process", help="Transcribe and convert into canonical Field Event JSON")
@@ -28,6 +30,13 @@ def main():
     proc_parser.add_argument("--text", "-t", help="Raw voice text note")
     proc_parser.add_argument("--project", "-p", default="PRJ-DEMO-01", help="Project ID")
     proc_parser.add_argument("--enqueue", "-e", action="store_true", help="Automatically enqueue into offline SQLite storage")
+    proc_parser.add_argument("--engine", default="auto", help="STT Engine: auto | azure | whisper | fallback")
+
+    # Process Image command
+    img_parser = subparsers.add_parser("process-image", help="Process field photo evidence image")
+    img_parser.add_argument("--file", "-f", required=True, help="Path to site image file (.jpg/.png)")
+    img_parser.add_argument("--event", help="Associated Event ID")
+    img_parser.add_argument("--context", help="Activity context string")
 
     # Queue command
     q_parser = subparsers.add_parser("queue", help="Manage offline SQLite queue")
@@ -41,7 +50,7 @@ def main():
     sync_parser.add_argument("--force", action="store_true", help="Force sync attempt regardless of connectivity ping")
 
     # Serve command
-    serve_parser = subparsers.add_parser("serve", help="Launch FastAPI server for Voice Offline module")
+    serve_parser = subparsers.add_parser("serve", help="Launch FastAPI server for Voice & Image Offline module")
     serve_parser.add_argument("--host", default="127.0.0.1", help="Host address")
     serve_parser.add_argument("--port", type=int, default=8005, help="Port number")
 
@@ -54,7 +63,7 @@ def main():
             print(f"  - {case}: {p}")
 
     elif args.command == "transcribe":
-        stt = SpeechToTextEngine()
+        stt = SpeechToTextEngine(engine_type=args.engine)
         if args.file:
             res = stt.transcribe(args.file)
         elif args.text:
@@ -65,7 +74,7 @@ def main():
         print(json.dumps(res, indent=2))
 
     elif args.command == "process":
-        stt = SpeechToTextEngine()
+        stt = SpeechToTextEngine(engine_type=args.engine)
         extractor = FieldEventExtractor()
         queue_mgr = OfflineQueueManager()
 
@@ -91,6 +100,15 @@ def main():
             print("[Enqueued into SQLite Offline Storage]")
 
         print(json.dumps(field_event, indent=2))
+
+    elif args.command == "process-image":
+        img_processor = ImageEvidenceProcessor()
+        evidence_result = img_processor.process_image(
+            image_path=args.file,
+            event_id=args.event,
+            activity_context=args.context
+        )
+        print(json.dumps(evidence_result, indent=2))
 
     elif args.command == "queue":
         queue_mgr = OfflineQueueManager()
