@@ -46,8 +46,30 @@ def detect_pipe_like_shapes(image):
 
 def score_evidence(image_path, expected_activity):
     """Main function. Give it a photo path, get back a score."""
-    image = cv2.imread(image_path)
+    if expected_activity and not str(expected_activity).startswith("PIP-"):
+        return {
+            "analysis": {
+                "model": "heuristic_cv",
+                "objects": [],
+                "visual_evidence_score": 0.0,
+                "supports_activity": False,
+            },
+            "failure_reason": "unsupported_activity"
+        }
 
+    image_path = str(image_path)
+    if image_path.startswith(("/", "\\")) or ".." in image_path:
+        return {
+            "analysis": {
+                "model": "heuristic_cv",
+                "objects": [],
+                "visual_evidence_score": 0.0,
+                "supports_activity": False,
+            },
+            "failure_reason": "invalid_image_ref"
+        }
+
+    image = cv2.imread(image_path)
     if image is None:
         return {
             "analysis": {
