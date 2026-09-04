@@ -1,4 +1,3 @@
-import os
 import wave
 import re
 from pathlib import Path

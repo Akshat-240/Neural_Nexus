@@ -112,8 +112,8 @@ async def process_and_queue_voice(
     saves to local offline queue, and optionally attempts backend sync.
     """
     field_event = await process_voice_event(file=file, raw_text=raw_text, project_id=project_id)
-    audio_path = str(AUDIO_STORE_DIR / file.filename) if file else None
-    
+    audio_path = str(AUDIO_STORE_DIR / f"voice_{Path(file.filename).name}") if file else None
+
     queued = queue_mgr.enqueue_event(field_event, audio_path=audio_path)
     
     sync_result = None
