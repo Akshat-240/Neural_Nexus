@@ -286,14 +286,19 @@ export default function FieldCapture() {
     const rec = new MediaRecorder(stream);
     const chunks = [];
     rec.ondataavailable = e => chunks.push(e.data);
-    rec.onstop = () => {
+    rec.onstop = async () => {
       stream.getTracks().forEach(t => t.stop());
-      // Use SpeechRecognition for live transcript if available
-      // Fallback: pre-fill Case A text and mark as voice
-      const fakeTranscript = "24-XX spool erected today at Unit 3.";
-      setTranscript(fakeTranscript);
-      setReport(fakeTranscript);
       setRecording(false);
+      setTranscript("Transcribing...");
+      try {
+        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        const data = await api.transcribeVoice("PRJ-DEMO-01", audioBlob);
+        const text = data.transcript;
+        setTranscript(text);
+        setReport(text);
+      } catch (e) {
+        setTranscript("Transcription failed: " + e.message);
+      }
     };
     rec.start();
     mediaRecRef.current = rec;

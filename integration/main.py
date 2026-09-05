@@ -65,22 +65,18 @@ async def process_update(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Voice ─────────────────────────────────────────────────────
-class VoiceRequest(BaseModel):
-    project_id: str
-    audio_ref: str
-    image_ref: Optional[str] = None
-
 @app.post("/api/v1/voice/transcribe")
-def voice_transcribe(req: VoiceRequest):
-    voice_res = voice_adapter.transcribe_and_extract(req.audio_ref, req.project_id)
-    transcript = voice_res.get("transcript", "")
-    return orchestrator.process_update(
-        project_id=req.project_id,
-        report_text=transcript,
-        image_ref=req.image_ref,
-    )
+async def voice_transcribe(
+    project_id: str = Form(...),
+    audio: UploadFile = File(...)
+):
+    safe = f"{datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{audio.filename}"
+    audio_path = os.path.abspath(f"temp_uploads/{safe}")
+    with open(audio_path, "wb") as buf:
+        shutil.copyfileobj(audio.file, buf)
 
+    voice_res = voice_adapter.transcribe_and_extract(audio_path, project_id)
+    return {"transcript": voice_res.get("transcript", "")}
 
 # ── Activities (Schedule) ─────────────────────────────────────
 @app.get("/api/v1/activities")
