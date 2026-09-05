@@ -44,6 +44,19 @@ def detect_pipe_like_shapes(image):
 
     return confidence, total_lines
 
+def check_scene_plausibility(image):
+    """Rejects obviously non-industrial photos (sunsets, portraits, scenery)
+    using color saturation as a proxy. Construction/pipe photos are usually
+    muted/grey; vivid artistic photos are usually highly saturated."""
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    avg_saturation = np.mean(hsv[:, :, 1])  # 0-255 scale
+
+    if avg_saturation > 90:
+        return False, "image_too_vivid_unlikely_construction_site"
+
+    return True, "ok"
+
+
 def score_evidence(image_path, expected_activity):
     """Main function. Give it a photo path, get back a score."""
     if expected_activity and not str(expected_activity).startswith("PIP-"):
@@ -91,6 +104,18 @@ def score_evidence(image_path, expected_activity):
                 "supports_activity": False,
             },
             "failure_reason": reason
+        }
+
+    plausible, plaus_reason = check_scene_plausibility(image)
+    if not plausible:
+        return {
+            "analysis": {
+                "model": "heuristic_cv",
+                "objects": [],
+                "visual_evidence_score": 0.05,
+                "supports_activity": False,
+            },
+            "failure_reason": plaus_reason
         }
 
     confidence, num_lines = detect_pipe_like_shapes(image)
