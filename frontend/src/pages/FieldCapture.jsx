@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 
@@ -65,6 +65,75 @@ function ConfidenceBar({ value }) {
         <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: "5px", transition: "width 0.6s ease" }} />
       </div>
       <strong style={{ color, minWidth: "3rem", fontSize: "1.1rem" }}>{pct}%</strong>
+    </div>
+  );
+}
+
+function LanguageInsightsPanel({ insights }) {
+  if (!insights || !insights.language) return null;
+  const { language, sentiment, entities, key_phrases } = insights;
+  
+  const getSentimentColor = (sent) => {
+    if (sent === "positive") return { bg: "#dcfce7", text: "#166534" };
+    if (sent === "negative") return { bg: "#fee2e2", text: "#991b1b" };
+    return { bg: "#f3f4f6", text: "#374151" };
+  };
+  const sc = getSentimentColor(sentiment?.overall);
+
+  return (
+    <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "1.25rem", marginBottom: "1.5rem", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+      <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
+        Azure NLP Insights
+      </div>
+      
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+        {/* Language Badge */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+          <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>Language</span>
+          <div style={{ background: "#eff6ff", color: "#1d4ed8", padding: "0.25rem 0.6rem", borderRadius: "4px", fontSize: "0.85rem", fontWeight: 600 }}>
+            {language.name} {language.confidence ? `(${Math.round(language.confidence * 100)}%)` : ""}
+          </div>
+        </div>
+
+        {/* Sentiment Badge */}
+        {sentiment && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <span style={{ fontSize: "0.7rem", color: "#94a3b8" }}>Sentiment</span>
+            <div style={{ background: sc.bg, color: sc.text, padding: "0.25rem 0.6rem", borderRadius: "4px", fontSize: "0.85rem", fontWeight: 600, textTransform: "capitalize" }}>
+              {sentiment.overall}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Entities & Key Phrases */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        {entities && entities.length > 0 && (
+          <div>
+            <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block", marginBottom: "0.3rem" }}>Entities Detected</span>
+            <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+              {entities.map((e, idx) => (
+                <span key={idx} style={{ background: "#f8fafc", border: "1px solid #cbd5e1", color: "#334155", fontSize: "0.75rem", padding: "0.15rem 0.5rem", borderRadius: "12px" }}>
+                  <strong>{e.text}</strong> ({e.category})
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {key_phrases && key_phrases.length > 0 && (
+          <div>
+            <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block", marginBottom: "0.3rem" }}>Key Phrases</span>
+            <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+              {key_phrases.map((kp, idx) => (
+                <span key={idx} style={{ background: "#f1f5f9", color: "#475569", fontSize: "0.75rem", padding: "0.15rem 0.5rem", borderRadius: "4px" }}>
+                  {kp}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -228,7 +297,18 @@ export default function FieldCapture() {
   const [error,        setError]        = useState(null);
   const [recording,    setRecording]    = useState(false);
   const [transcript,   setTranscript]   = useState(null);
+  const [liveTranscript, setLiveTranscript] = useState("");
+  const [audioUrl,     setAudioUrl]     = useState(null);
+  const [languageInsights, setLanguageInsights] = useState(null);
+  const [analyzingLang, setAnalyzingLang] = useState(false);
+  const [targetLang, setTargetLang] = useState("hi");
+  const [translatedText, setTranslatedText] = useState("");
+  const [translating, setTranslating] = useState(false);
+  const [translationError, setTranslationError] = useState(null);
+  const [showTranslator, setShowTranslator] = useState(false);
   const mediaRecRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const liveTranscriptRef = useRef(""); // To access latest transcript in onstop closure
   const navigate    = useNavigate();
 
   const runPipeline = async (text, file) => {
@@ -271,43 +351,116 @@ export default function FieldCapture() {
     }
   };
 
+  const fetchInsights = async (text) => {
+    if (!text.trim()) return;
+    setAnalyzingLang(true);
+    try {
+      const insights = await api.analyzeLanguage(text);
+      setLanguageInsights(insights);
+    } catch (e) {
+      console.error("Language API failed", e);
+    } finally {
+      setAnalyzingLang(false);
+    }
+  };
+
+  const handleTranslate = async (lang = targetLang) => {
+    if (!report.trim()) return;
+    setTranslating(true);
+    setTranslationError(null);
+    try {
+      const res = await api.translateText(report, lang);
+      if (res.error) throw new Error(res.error);
+      setTranslatedText(res.translated_text);
+    } catch (err) {
+      console.error(err);
+      setTranslationError("Failed to translate. Please try again.");
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showTranslator && report.trim()) {
+      handleTranslate(targetLang);
+    }
+  }, [targetLang]);
+
   const handleAnalyze = () => {
     if (!report.trim()) return;
+    fetchInsights(report);
     runPipeline(report, selectedFile);
   };
 
-  // Voice recording via browser MediaRecorder
+  // Voice recording via browser MediaRecorder + Web Speech API for live preview
   const startVoice = async () => {
     if (!navigator.mediaDevices?.getUserMedia) {
       alert("Microphone not supported in this browser.");
       return;
     }
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    // Setup audio recording to send to backend
     const rec = new MediaRecorder(stream);
     const chunks = [];
+    liveTranscriptRef.current = ""; // Reset ref
+    
     rec.ondataavailable = e => chunks.push(e.data);
     rec.onstop = async () => {
       stream.getTracks().forEach(t => t.stop());
       setRecording(false);
-      setTranscript("Transcribing...");
+      setTranscript("Processing and verifying audio...");
       try {
         const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(audioBlob);
+        setAudioUrl(url);
         const data = await api.transcribeVoice("PRJ-DEMO-01", audioBlob);
-        const text = data.transcript;
-        setTranscript(text);
-        setReport(text);
+        
+        // Use the live transcript if available (since backend dummy returns "Field voice report..."), 
+        // fallback to backend data if Web Speech API failed.
+        const finalTranscript = liveTranscriptRef.current.trim() || data.transcript;
+        
+        setTranscript(finalTranscript);
+        setReport(finalTranscript);
+        setLiveTranscript("");
+        fetchInsights(finalTranscript);
       } catch (e) {
         setTranscript("Transcription failed: " + e.message);
       }
     };
     rec.start();
     mediaRecRef.current = rec;
+
+    // Setup live transcription
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.onresult = (event) => {
+        let text = "";
+        for (let i = 0; i < event.results.length; i++) {
+          text += event.results[i][0].transcript;
+        }
+        setLiveTranscript(text);
+        liveTranscriptRef.current = text;
+      };
+      recognition.start();
+      recognitionRef.current = recognition;
+    }
+
     setRecording(true);
     setTranscript(null);
+    setAudioUrl(null);
+    setLiveTranscript("Listening...");
   };
 
   const stopVoice = () => {
     if (mediaRecRef.current) mediaRecRef.current.stop();
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
   };
 
   const setDemo = (text) => {
@@ -337,10 +490,68 @@ export default function FieldCapture() {
           </select>
 
           {/* Voice transcript echo */}
-          {transcript && (
+          {(transcript || (recording && liveTranscript)) && (
             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "6px", padding: "0.75rem 1rem", marginBottom: "1rem", fontSize: "0.9rem" }}>
-              <div style={{ fontSize: "0.7rem", color: "#3b82f6", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>VOICE TRANSCRIPT</div>
-              <p style={{ fontStyle: "italic", color: "#1e40af", margin: 0 }}>"{transcript}"</p>
+              <div style={{ fontSize: "0.7rem", color: "#3b82f6", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.25rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span>{recording ? "🎙 LIVE TRANSCRIPT" : "VOICE TRANSCRIPT"}</span>
+                {recording && <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444", animation: "pulse 1.5s infinite" }} />}
+              </div>
+              <p style={{ fontStyle: "italic", color: "#1e40af", margin: 0, marginBottom: audioUrl ? "0.75rem" : 0 }}>"{recording ? liveTranscript : transcript}"</p>
+              
+              {audioUrl && !recording && (
+                <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", paddingTop: "0.75rem", borderTop: "1px solid #dbeafe" }}>
+                  <audio src={audioUrl} controls style={{ height: "36px", width: "100%", outline: "none" }} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Azure NLP Insights */}
+          {!recording && analyzingLang && (
+            <div style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "1rem", fontStyle: "italic" }}>
+              Analyzing language insights...
+            </div>
+          )}
+          {!recording && languageInsights && (
+             <LanguageInsightsPanel insights={languageInsights} />
+          )}
+
+          {/* Translation Panel */}
+          {showTranslator && (
+            <div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "1.25rem", marginBottom: "1.5rem", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  Translation
+                </div>
+                <select 
+                  value={targetLang}
+                  onChange={(e) => setTargetLang(e.target.value)}
+                  style={{ padding: "0.4rem 0.75rem", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "0.85rem", color: "#334155", background: "#f8fafc", outline: "none", cursor: "pointer" }}
+                >
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="hi">Hindi</option>
+                  <option value="ar">Arabic</option>
+                  <option value="zh-Hans">Chinese (Simplified)</option>
+                </select>
+              </div>
+
+              {translating ? (
+                <div style={{ fontSize: "0.85rem", color: "#64748b", fontStyle: "italic", padding: "0.5rem 0" }}>
+                  Translating...
+                </div>
+              ) : translationError ? (
+                <div style={{ fontSize: "0.85rem", color: "#ef4444", padding: "0.5rem 0", background: "#fef2f2", borderRadius: "4px", paddingLeft: "0.5rem" }}>
+                  {translationError}
+                </div>
+              ) : (
+                <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
+                  <p style={{ margin: 0, fontSize: "0.95rem", color: "#334155", fontStyle: "italic" }}>
+                    "{translatedText}"
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -368,6 +579,27 @@ export default function FieldCapture() {
               style={{ background: recording ? "#ef4444" : undefined }}
             >
               {recording ? "◼ Stop recording" : "🎙 Record voice"}
+            </button>
+            <button
+              className="fc-translate-btn"
+              onClick={() => {
+                if (showTranslator) {
+                  setShowTranslator(false);
+                } else {
+                  setShowTranslator(true);
+                  handleTranslate(targetLang);
+                }
+              }}
+              disabled={loading || !report.trim()}
+              style={{
+                padding: "0.85rem 1.5rem", borderRadius: "8px", fontWeight: 600,
+                fontSize: "0.95rem", cursor: "pointer", transition: "all 0.2s",
+                background: showTranslator ? "#1e40af" : "white",
+                color: showTranslator ? "white" : "#475569",
+                border: "1px solid #cbd5e1"
+              }}
+            >
+              🌐 Translate
             </button>
           </div>
 

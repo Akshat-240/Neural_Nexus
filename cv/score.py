@@ -1,5 +1,10 @@
 import cv2
 import numpy as np
+import logging
+
+from cv.azure_vision import analyze_image_azure, is_configured as azure_configured
+
+logger = logging.getLogger(__name__)
 
 
 def check_image_quality(image):
@@ -57,19 +62,8 @@ def check_scene_plausibility(image):
     return True, "ok"
 
 
-def score_evidence(image_path, expected_activity):
-    """Main function. Give it a photo path, get back a score."""
-    if expected_activity and not str(expected_activity).startswith("PIP-"):
-        return {
-            "analysis": {
-                "model": "heuristic_cv",
-                "objects": [],
-                "visual_evidence_score": 0.0,
-                "supports_activity": False,
-            },
-            "failure_reason": "unsupported_activity"
-        }
-
+def _heuristic_score(image_path, expected_activity):
+    """Original heuristic-only scoring pipeline (OpenCV)."""
     image_path = str(image_path)
     if image_path.startswith(("/", "\\")) or ".." in image_path:
         return {
@@ -139,3 +133,45 @@ def score_evidence(image_path, expected_activity):
         },
         "failure_reason": None
     }
+
+
+def score_evidence(image_path, expected_activity):
+    """Main function. Give it a photo path, get back a score.
+
+    Uses Azure Computer Vision when configured, falling back to
+    the heuristic OpenCV pipeline otherwise.
+    """
+    if expected_activity and not str(expected_activity).startswith("PIP-"):
+        return {
+            "analysis": {
+                "model": "heuristic_cv",
+                "objects": [],
+                "visual_evidence_score": 0.0,
+                "supports_activity": False,
+            },
+            "failure_reason": "unsupported_activity"
+        }
+
+    # Try Azure Computer Vision first
+    if azure_configured():
+        try:
+            azure_result = analyze_image_azure(image_path)
+            if azure_result is not None:
+                logger.info("Azure CV analysis succeeded (score=%.2f)",
+                            azure_result["visual_evidence_score"])
+                return {
+                    "analysis": {
+                        "model": azure_result["model"],
+                        "objects": azure_result["objects"],
+                        "tags": azure_result.get("tags", []),
+                        "caption": azure_result.get("caption"),
+                        "visual_evidence_score": azure_result["visual_evidence_score"],
+                        "supports_activity": azure_result["supports_activity"],
+                    },
+                    "failure_reason": None
+                }
+        except Exception as e:
+            logger.warning("Azure CV failed, falling back to heuristic: %s", e)
+
+    # Fallback to heuristic pipeline
+    return _heuristic_score(image_path, expected_activity)

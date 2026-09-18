@@ -7,8 +7,13 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional
 import os, shutil, datetime
+from dotenv import load_dotenv
+load_dotenv()
+
 from .orchestrator import Orchestrator
 from .adapters.voice_adapter import VoiceAdapter
+from .adapters.azure_language import AzureLanguageAdapter
+from .adapters.azure_translator import AzureTranslatorAdapter
 
 app = FastAPI(title="Neural Nexus — Integration API")
 
@@ -26,6 +31,8 @@ app.mount("/uploads", StaticFiles(directory="temp_uploads"), name="uploads")
 
 orchestrator = Orchestrator()
 voice_adapter = VoiceAdapter()
+language_adapter = AzureLanguageAdapter()
+translator_adapter = AzureTranslatorAdapter()
 
 
 def _db():
@@ -36,6 +43,31 @@ def _db():
 @app.get("/")
 def home():
     return {"message": "Neural Nexus Integration API running."}
+
+
+# ── Language Insights ─────────────────────────────────────────
+class TextPayload(BaseModel):
+    text: str
+
+class TranslatePayload(BaseModel):
+    text: str
+    target_lang: str
+
+@app.post("/api/v1/language/analyze")
+def analyze_language(payload: TextPayload):
+    try:
+        results = language_adapter.analyze_text(payload.text)
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/language/translate")
+def translate_language(payload: TranslatePayload):
+    try:
+        results = translator_adapter.translate_text(payload.text, payload.target_lang)
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ── Process update ────────────────────────────────────────────
@@ -49,7 +81,7 @@ async def process_update(
         image_path = None
         if image and image.filename:
             safe = f"{datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{image.filename}"
-            image_path = os.path.abspath(f"temp_uploads/{safe}")
+            image_path = f"temp_uploads/{safe}"
             with open(image_path, "wb") as buf:
                 shutil.copyfileobj(image.file, buf)
 

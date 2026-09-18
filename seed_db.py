@@ -16,17 +16,19 @@ def seed_db():
         # Get Demo Activities
         activities = get_demo_schedule_activities()
         for act in activities:
-            crud.create_activity(db, schemas.ActivityCreate(
-                project_id=project_id,
-                activity_id=act["activity_id"],
-                activity_name=act["activity_name"],
-                wbs_code=act["wbs"]["code"],
-                level=act["wbs"]["level"],
-                discipline=act["discipline"],
-                location=act["location"],
-                planned_progress=act["planned"]["progress_pct"],
-                status=act["status"]
-            ))
+            existing = db.query(models.Activity).filter_by(activity_id=act["activity_id"]).first()
+            if not existing:
+                crud.create_activity(db, schemas.ActivityCreate(
+                    project_id=project_id,
+                    activity_id=act["activity_id"],
+                    activity_name=act["activity_name"],
+                    wbs_code=act["wbs"]["code"],
+                    level=act["wbs"]["level"],
+                    discipline=act["discipline"],
+                    location=act["location"],
+                    planned_progress=act["planned"]["progress_pct"],
+                    status=act["status"]
+                ))
             
         print("Database seeded successfully with Demo Project and Schedule Activities.")
     except Exception as e:
