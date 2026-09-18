@@ -63,5 +63,9 @@ export const api = {
     return post("/api/v1/voice/transcribe", form);
   },
 
+  // Language & Translation
+  analyzeLanguage: (text) => post("/api/v1/language/analyze", { text }),
+  translateText: (text, targetLang) => post("/api/v1/language/translate", { text, target_lang: targetLang }),
+
   imageUrl: (path) => (path ? `${BASE}${path}` : null),
 };

@@ -9,3 +9,5 @@ venv/
 .DS_Store
 test_annotated.jpg
 sih26122_db.sqlite
+.env
+temp_uploads/
